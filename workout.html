@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="운동 트래커">
+<link rel="manifest" href="manifest.json">
+<title>운동 트래커</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;
+  --bd:#2e2e2e;--bd2:#3a3a3a;
+  --tx:#f0f0f0;--tx2:#888;--tx3:#555;
+  --g:#4ade80;--gd:#1a3a26;--gb:#2a5a3a;--gt:#86efac;
+  --b:#60a5fa;--bdd:#1a2a3a;--bb:#1e3a5a;--bt:#93c5fd;
+  --a:#fbbf24;--ad:#2d2208;--ab:#3a2a0a;--at:#fcd34d;
+  --r:#f87171;--rd:#2d1010;--rb:#5a2a2a;--rt:#fca5a5;
+  --p:#a78bfa;--pd:#1e1535;--pt:#c4b5fd;
+  --o:#fb923c;--od:#2d1a08;--ob:#5a3010;--ot:#fdba74;
+  --rr:12px;--rs:8px;
+  --sb:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overscroll-behavior:none}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100%;padding-bottom:calc(62px + var(--sb))}
+
+/* Header */
+.hdr{padding:14px 16px 10px;border-bottom:1px solid var(--bd);background:var(--bg);position:sticky;top:0;z-index:10}
+.hdr-row{display:flex;justify-content:space-between;align-items:center}
+.hdr-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.hdr-sub{font-size:11px;color:var(--tx3);margin-top:1px}
+.hdr-pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--tx2)}
+
+/* Nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg2);border-top:1px solid var(--bd);display:flex;z-index:20;padding-bottom:var(--sb)}
+.nb{flex:1;padding:8px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:transparent;color:var(--tx3);font-family:inherit;-webkit-tap-highlight-color:transparent;transition:color .15s}
+.nb.on{color:var(--g)}
+.ni{font-size:18px;line-height:1}
+.nl{font-size:10px}
+
+/* Pages */
+.pg{display:none;padding:12px 14px}
+.pg.on{display:block}
+.sec{font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rr);padding:14px 16px;margin-bottom:10px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat{background:var(--bg3);border-radius:var(--rs);padding:10px 12px}
+.s-lbl{font-size:11px;color:var(--tx2);margin-bottom:2px}
+.s-val{font-size:20px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.5px}
+.s-unit{font-size:11px;font-weight:400;color:var(--tx2)}
+
+/* Phase */
+.phase{border-radius:var(--rr);padding:12px 14px;margin-bottom:10px;border:1px solid var(--ob);background:var(--od)}
+.phase-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--ot);opacity:.7;margin-bottom:3px}
+.phase-title{font-size:14px;font-weight:700;color:var(--ot);margin-bottom:2px}
+.phase-desc{font-size:11px;color:var(--ot);opacity:.8;line-height:1.5;margin-bottom:8px}
+.p-row{display:flex;justify-content:space-between;font-size:11px;color:var(--ot);opacity:.8;margin-bottom:3px}
+.p-track{height:4px;background:rgba(0,0,0,.3);border-radius:2px;overflow:hidden}
+.p-fill{height:100%;border-radius:2px;background:var(--ot);transition:width .3s}
+
+/* Week */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px}
+.wday{border-radius:6px;padding:5px 2px;text-align:center;border:1px solid var(--bd);background:var(--bg3)}
+.wday.wa{background:var(--bdd);border-color:var(--bb)}
+.wday.wb{background:var(--ad);border-color:var(--ab)}
+.wday.today{border-width:2px!important;border-color:var(--g)!important}
+.wdn{font-size:9px;color:var(--tx2)}
+.wdt{font-size:10px;font-weight:500;margin-top:1px}
+.wa .wdt{color:var(--bt)}
+.wb .wdt{color:var(--at)}
+.wday:not(.wa):not(.wb) .wdt{color:var(--tx3)}
+.rtip{padding:6px 10px;border-left:2px solid var(--bd2);margin-bottom:5px;font-size:12px;color:var(--tx2);line-height:1.5}
+.rtip b{color:var(--tx);font-weight:500}
+
+/* Goals */
+.goal+.goal{margin-top:8px}
+.g-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.g-lbl{color:var(--tx2)}
+.g-val{font-family:'DM Mono',monospace;font-size:11px}
+.g-track{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.g-fill{height:100%;border-radius:2px}
+
+/* Day selector */
+.day-sel{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px}
+.ds{padding:8px 4px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--bg3);color:var(--tx3);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;text-align:center;line-height:1.4;-webkit-tap-highlight-color:transparent;transition:all .12s}
+.ds.mon{background:var(--bdd);border-color:var(--bb);color:var(--bt)}
+.ds.thu{background:#1a2d1a;border-color:#2a4a2a;color:#86d086}
+.ds.tue{background:var(--ad);border-color:var(--ab);color:var(--at)}
+.ds.fri{background:var(--pd);border-color:#3a2a5a;color:var(--pt)}
+
+/* Workout timer bar */
+.wt-bar{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rr);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.wt-time{font-family:'DM Mono',monospace;font-size:30px;font-weight:500;letter-spacing:-1px;flex-shrink:0}
+.wt-mid{flex:1;text-align:center}
+.wt-cal{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--a)}
+.wt-cal-lbl{font-size:10px;color:var(--tx3);margin-top:1px}
+.wt-btns{display:flex;gap:6px;flex-shrink:0}
+.wt-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--bd);background:var(--bg3);color:var(--tx2);font-family:inherit;font-size:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .1s}
+.wt-btn.active{background:var(--gd);border-color:var(--gb);color:var(--gt);font-weight:500}
+
+/* Exercise */
+.ex{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rr);margin-bottom:8px;overflow:hidden}
+.ex-head{padding:12px 14px 0}
+.ex-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px}
+.ex-name{font-size:14px;font-weight:700;flex:1;line-height:1.3}
+.ex-w{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--g);white-space:nowrap}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;display:inline-block;border:1px solid transparent}
+.tag-m{background:var(--pd);color:var(--pt)}
+.tag-f{background:var(--ad);color:var(--at)}
+.tag-h{background:var(--bdd);color:var(--bt)}
+.tag-e{background:var(--od);color:var(--ot)}
+.tag-i{background:var(--bg3);color:var(--tx3)}
+.ex-tip{font-size:11px;color:var(--tx2);padding:6px 10px;background:var(--bg3);border-radius:6px;margin-bottom:8px;line-height:1.6}
+
+/* Sets */
+.sets-wrap{padding:0 14px 12px}
+.sets-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.sets-lbl{font-size:11px;color:var(--tx3)}
+.sets-prog{font-size:11px;font-family:'DM Mono',monospace;color:var(--tx2)}
+.set-rows{display:flex;flex-direction:column;gap:5px}
+.set-row{border-radius:var(--rs);border:1px solid var(--bd);background:var(--bg3);overflow:hidden}
+.set-main{display:flex;align-items:center;gap:8px;padding:9px 12px}
+.set-row.ok .set-main{background:var(--gd)}
+.set-row.ok{border-color:var(--gb)}
+.set-row.ng .set-main{background:var(--rd)}
+.set-row.ng{border-color:var(--rb)}
+.set-num{font-size:12px;font-weight:500;color:var(--tx3);width:20px;flex-shrink:0;font-family:'DM Mono',monospace}
+.set-row.ok .set-num{color:var(--gt)}
+.set-row.ng .set-num{color:var(--rt)}
+.set-tgt{font-size:13px;color:var(--tx2);flex:1}
+.set-row.ok .set-tgt{color:var(--gt)}
+.set-row.ng .set-tgt{color:var(--rt)}
+.set-btns{display:flex;gap:5px;flex-shrink:0}
+.bok,.bng{height:34px;padding:0 12px;border-radius:6px;border:1px solid var(--bd2);background:var(--bg4);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;color:var(--tx2);transition:transform .1s}
+.bok:active,.bng:active{transform:scale(.93)}
+.set-row.ok .bok{background:var(--gd);border-color:var(--gb);color:var(--gt)}
+.set-row.ng .bng{background:var(--rd);border-color:var(--rb);color:var(--rt)}
+.fail-wrap{display:none;align-items:center;gap:8px;padding:6px 12px 8px;background:var(--rd);border-top:1px solid var(--rb)}
+.set-row.ng .fail-wrap{display:flex}
+.fail-lbl{font-size:11px;color:var(--rt);flex-shrink:0}
+.fail-inp{width:50px;height:28px;border-radius:5px;border:1px solid var(--rb);background:var(--bg3);color:var(--rt);font-family:'DM Mono',monospace;font-size:13px;text-align:center;padding:0 4px}
+.prog-bar{height:3px;background:var(--bg3);margin:6px 14px;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--g);border-radius:2px;transition:width .3s}
+
+/* Inline rest pill — 운동 이름 옆 */
+.ex-top-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.rest-pill{display:none;align-items:center;gap:6px;background:var(--bdd);border:1px solid var(--bb);border-radius:20px;padding:4px 8px 4px 10px;min-width:90px}
+.rest-pill.show{display:flex}
+.rest-pill-t{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--bt);white-space:nowrap;min-width:38px;text-align:center}
+.rest-pill-cancel{width:20px;height:20px;border-radius:50%;border:1px solid var(--rb);background:var(--rd);color:var(--rt);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.rest-pill-cancel:active{transform:scale(.9)}
+.rest-pill-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(0,0,0,.3);border-radius:0 0 20px 20px;overflow:hidden;display:none}
+.rest-pill-fill{height:100%;background:var(--b);border-radius:inherit;transition:width .25s linear}
+
+/* Notice */
+.notice{margin:0 14px 10px;padding:8px 12px;border-radius:var(--rs);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.n-up{background:var(--gd);border:1px solid var(--gb);color:var(--gt)}
+.n-dn{background:var(--rd);border:1px solid var(--rb);color:var(--rt)}
+.n-w{background:var(--ad);border:1px solid var(--ab);color:var(--at)}
+.n-btn{padding:4px 10px;border-radius:20px;border:1px solid currentColor;background:transparent;font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+
+/* Cardio */
+.cardio{background:var(--od);border:1px solid var(--ob);border-radius:var(--rr);padding:12px 14px;margin-bottom:8px}
+.cardio-title{font-size:13px;font-weight:700;color:var(--ot);margin-bottom:8px}
+.c-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,0,0,.2);border-radius:var(--rs);border:1px solid var(--ob)}
+.c-row.ok{background:var(--gd);border-color:var(--gb)}
+.c-name{font-size:13px;font-weight:500;color:var(--ot);flex:1}
+.c-row.ok .c-name{color:var(--gt)}
+.c-sub{font-size:11px;color:var(--ot);opacity:.6;margin-top:1px}
+.c-row.ok .c-sub{color:var(--gt);opacity:.7}
+.c-btn{height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--ob);background:transparent;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;color:var(--ot);-webkit-tap-highlight-color:transparent}
+.c-row.ok .c-btn{background:var(--gd);border-color:var(--gb);color:var(--gt)}
+
+/* ── History ── */
+.hist-filter{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.hf-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--bg3);color:var(--tx3);font-family:inherit;font-size:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.hf-btn.on{background:var(--gd);border-color:var(--gb);color:var(--gt)}
+.hist-empty{text-align:center;padding:40px 0;color:var(--tx3);font-size:13px}
+.hist-day{margin-bottom:14px}
+.hist-day-hdr{display:flex;justify-content:space-between;align-items:center;padding:0 2px;margin-bottom:6px}
+.hist-date{font-size:13px;font-weight:700}
+.hist-day-meta{font-size:11px;color:var(--tx2)}
+.hist-ex-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:4px}
+.hist-ex-name{font-size:12px;font-weight:500;flex:1}
+.hist-ex-detail{font-size:11px;color:var(--tx2);text-align:right}
+.hist-ex-ok{font-size:11px;color:var(--gt)}
+.hist-ex-ng{font-size:11px;color:var(--rt)}
+.hist-summary{background:var(--bg3);border-radius:var(--rs);padding:8px 12px;margin-bottom:4px;font-size:12px;color:var(--tx2);display:flex;gap:12px;flex-wrap:wrap}
+.hist-summary span{color:var(--tx)}
+
+/* InBody */
+.ib-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.ib-tbl td{padding:7px 0;border-bottom:1px solid var(--bd)}
+.ib-tbl tr:last-child td{border-bottom:none}
+.ib-tbl td:last-child{text-align:right;font-weight:500;font-family:'DM Mono',monospace}
+.upload{border:1px dashed var(--bd2);border-radius:var(--rr);padding:22px;text-align:center;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
+.upload:active{background:var(--bg3)}
+.r-row{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.r-row:last-child{border-bottom:none}
+.r-ico{font-size:13px;flex-shrink:0;width:20px;text-align:center;margin-top:1px}
+.r-txt{color:var(--tx2);line-height:1.6}
+.r-txt b{color:var(--tx);font-weight:500}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:flex-end;justify-content:center}
+.modal-bg.on{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rr) var(--rr) 0 0;padding:20px 16px calc(20px + var(--sb));width:100%;max-width:480px}
+.m-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.m-body{font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.7;white-space:pre-line}
+.m-btns{display:flex;gap:8px;justify-content:flex-end}
+.btn{padding:10px 20px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--bg3);color:var(--tx);font-family:inherit;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.btn-g{background:var(--gd);border-color:var(--gb);color:var(--gt);font-weight:500}
+.btn-r{background:var(--rd);border-color:var(--rb);color:var(--rt)}
+
+input[type=file]{display:none}
+input[type=number]{-moz-appearance:textfield;outline:none}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div><div class="hdr-title">🔥 운동 트래커</div><div class="hdr-sub">월목 하체 · 화금 상체 · 유산소 필수</div></div>
+      <div class="hdr-pill" id="hpill">로딩중</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="pg on" id="pg-home">
+    <div class="phase">
+      <div class="phase-lbl">진행중 · 1단계</div>
+      <div class="phase-title">체지방 감량기</div>
+      <div class="phase-desc">월목 근비대(8~12회) + 화금 유산소성(15~20회) + 유산소 필수</div>
+      <div class="p-row"><span>25.5% → 20% 목표 진행</span><span id="phase-pct">0%</span></div>
+      <div class="p-track"><div class="p-fill" id="phase-fill" style="width:0%"></div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="s-lbl">체중</div><div class="s-val" id="d-bw">66.4<span class="s-unit">kg</span></div></div>
+      <div class="stat"><div class="s-lbl">골격근량</div><div class="s-val">27.7<span class="s-unit">kg</span></div></div>
+      <div class="stat"><div class="s-lbl">체지방률</div><div class="s-val" id="d-fat">25.5<span class="s-unit">%</span></div></div>
+      <div class="stat"><div class="s-lbl">인바디</div><div class="s-val">68<span class="s-unit">점</span></div></div>
+    </div>
+    <div class="card">
+      <div class="sec">이번 주 스케줄</div>
+      <div class="week" id="week"></div>
+      <div id="today-info"></div>
+    </div>
+    <div class="card">
+      <div class="sec">목표 현황</div>
+      <div class="goal"><div class="g-row"><span class="g-lbl">체지방률 목표 13%</span><span class="g-val" style="color:var(--a)" id="g-fat-val">25.5% → 13%</span></div><div class="g-track"><div class="g-fill" id="g-fat-fill" style="width:0%;background:var(--a)"></div></div></div>
+      <div class="goal"><div class="g-row"><span class="g-lbl">골격근량 목표 30kg</span><span class="g-val" style="color:var(--b)">27.7 / 30kg</span></div><div class="g-track"><div class="g-fill" style="width:92%;background:var(--b)"></div></div></div>
+      <div class="goal"><div class="g-row"><span class="g-lbl">목표 체중 63kg</span><span class="g-val" style="color:var(--g)" id="g-bw-val">66.4 → 63kg</span></div><div class="g-track"><div class="g-fill" id="g-bw-fill" style="width:52%;background:var(--g)"></div></div></div>
+    </div>
+  </div>
+
+  <!-- WORKOUT -->
+  <div class="pg" id="pg-workout">
+    <div class="wt-bar">
+      <div>
+        <div style="font-size:10px;color:var(--tx3);margin-bottom:1px">운동 시간</div>
+        <div class="wt-time" id="wt-time">00:00</div>
+      </div>
+      <div class="wt-mid">
+        <div class="wt-cal" id="wt-cal">0</div>
+        <div class="wt-cal-lbl">kcal 소모</div>
+      </div>
+      <div class="wt-btns">
+        <button class="wt-btn" id="btn-wts" onclick="wtToggle()">시작</button>
+        <button class="wt-btn" onclick="wtReset()">초기화</button>
+      </div>
+    </div>
+    <div class="day-sel">
+      <button class="ds" id="ds-mon" onclick="setDay('mon')">월<br><span style="font-size:9px;opacity:.7">머신 하체</span></button>
+      <button class="ds" id="ds-tue" onclick="setDay('tue')">화<br><span style="font-size:9px;opacity:.7">밀기</span></button>
+      <button class="ds" id="ds-thu" onclick="setDay('thu')">목<br><span style="font-size:9px;opacity:.7">프리 하체</span></button>
+      <button class="ds" id="ds-fri" onclick="setDay('fri')">금<br><span style="font-size:9px;opacity:.7">당기기</span></button>
+    </div>
+    <div id="ex-list"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="pg" id="pg-history">
+    <div class="hist-filter" id="hist-filter">
+      <button class="hf-btn on" data-f="all" onclick="setHistFilter('all')">전체</button>
+      <button class="hf-btn" data-f="mon" onclick="setHistFilter('mon')">월 하체</button>
+      <button class="hf-btn" data-f="tue" onclick="setHistFilter('tue')">화 밀기</button>
+      <button class="hf-btn" data-f="thu" onclick="setHistFilter('thu')">목 하체</button>
+      <button class="hf-btn" data-f="fri" onclick="setHistFilter('fri')">금 당기기</button>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+
+  <!-- INBODY -->
+  <div class="pg" id="pg-inbody">
+    <div class="card">
+      <div class="sec">인바디 CSV 업로드</div>
+      <div class="upload" onclick="document.getElementById('csv-in').click()">
+        <div style="font-size:26px;margin-bottom:6px">📂</div>
+        <div style="font-size:13px;color:var(--tx2)">CSV 파일 업로드</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:3px">체중·체지방률 기준 자동 업데이트</div>
+      </div>
+      <input type="file" id="csv-in" accept=".csv" onchange="parseCSV(event)">
+      <div id="csv-msg" style="font-size:12px;margin-top:4px"></div>
+    </div>
+    <div class="card">
+      <div class="sec">현재 측정값</div>
+      <table class="ib-tbl">
+        <tr><td style="color:var(--tx2)">체중</td><td id="ib-bw">66.4 kg</td></tr>
+        <tr><td style="color:var(--tx2)">골격근량</td><td>27.7 kg</td></tr>
+        <tr><td style="color:var(--tx2)">체지방량</td><td>17.0 kg</td></tr>
+        <tr><td style="color:var(--tx2)">체지방률</td><td id="ib-fat">25.5 %</td></tr>
+        <tr><td style="color:var(--tx2)">기초대사량</td><td>1,438 kcal</td></tr>
+        <tr><td style="color:var(--tx2)">인바디 점수</td><td>68 점</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="sec">무게 증감 기준</div>
+      <div class="r-row"><div class="r-ico">✅</div><div class="r-txt"><b>전 세트 성공</b> — 다음 세션 무게 업<br>머신 +5kg · Omni Leg Press +10kg · 바벨/덤벨 +2.5kg</div></div>
+      <div class="r-row"><div class="r-ico">⚠️</div><div class="r-txt"><b>1~2회 연속 실패</b> — 무게 유지</div></div>
+      <div class="r-row"><div class="r-ico">🔻</div><div class="r-txt"><b>3회 연속 실패</b> — 무게 감량</div></div>
+    </div>
+    <div class="card">
+      <div class="sec">데이터 관리</div>
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:10px">운동 기록, 무게, 인바디가 기기에 저장됩니다.</div>
+      <button class="btn btn-r" onclick="confirmClearData()" style="font-size:13px;width:100%">모든 데이터 초기화</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nb on" id="nav-home"    onclick="showPage('home')">   <span class="ni">🏠</span><span class="nl">홈</span></button>
+  <button class="nb"    id="nav-workout" onclick="showPage('workout')"><span class="ni">🏋️</span><span class="nl">운동</span></button>
+  <button class="nb"    id="nav-history" onclick="showPage('history')"><span class="ni">📅</span><span class="nl">기록</span></button>
+  <button class="nb"    id="nav-inbody"  onclick="showPage('inbody')"> <span class="ni">📊</span><span class="nl">인바디</span></button>
+</nav>
+
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <div class="m-title" id="m-title"></div>
+    <div class="m-body"  id="m-body"></div>
+    <div class="m-btns">
+      <button class="btn" onclick="closeModal()">취소</button>
+      <button class="btn btn-g" id="m-confirm-btn" onclick="confirmModal()">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════
+const BASE_BW  = 66.4;
+const SCHEDULE = {1:'mon',2:'tue',4:'thu',5:'fri'};
+const DAY_KR   = ['일','월','화','수','목','금','토'];
+const DAY_LABEL= {mon:'월 · 머신 하체',tue:'화 · 밀기',thu:'목 · 프리 하체',fri:'금 · 당기기'};
+const DAY_COLOR= {mon:'var(--bt)',tue:'var(--at)',thu:'#86d086',fri:'var(--pt)'};
+const REST_TIPS= [
+  '<b>런닝머신</b> — 저강도 30~40분. 심박 120~130.',
+  '<b>천국의 계단</b> — 20~30분. 하체 회복.',
+  '<b>폼롤링+스트레칭</b> — 15분 롤링 후 정적 스트레칭.',
+  '<b>수면·영양</b> — 단백질 체중×1.5g 이상, 수면 7시간+.',
+];
+const MET = {mon:5.5,tue:5.0,thu:5.5,fri:5.0};
+
+// ═══════════════════════════════════════════════════
+//  EXERCISE DATA
+// ═══════════════════════════════════════════════════
+const EX = {
+  mon:[
+    {id:'m1',name:'Omni Leg Press',          part:'대퇴사두',        sets:4,reps:10,weight:80, inc:10, machine:true, rest:90, hyp:true, tip:'발 어깨 너비. 끝까지 펴지 말것. 10kg 단위 증량.'},
+    {id:'m2',name:'Leg Extension',            part:'대퇴사두 고립',   sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'끝에서 2초 수축. 천천히 내리기.'},
+    {id:'m3',name:'Lying Leg Curl',            part:'햄스트링',        sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'골반 고정. 끝에서 2초 수축.'},
+    {id:'m4',name:'Hip Adduction',             part:'내전근',          sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'천천히 열고 빠르게 모아.'},
+    {id:'m5',name:'Hip Abduction 머신',        part:'외전근·둔근',     sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'빠르게 열고 천천히 모아. 둔근 수축 의식.'},
+    {id:'m6',name:'스쿼트 & 카프레이즈 머신', part:'대퇴+종아리',     sets:3,reps:12,weight:50, inc:5,  machine:true, rest:75, hyp:true, tip:'스쿼트 12회 후 같은 자리에서 카프레이즈 12회 연속.'},
+    {id:'m7',name:'Abnormal Crunch 머신',      part:'복근',            sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 복근으로만. 끝에서 2초 수축.'},
+    {id:'m8',name:'Abs Slide',                 part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정 후 배꼽 당기며 천천히.'},
+  ],
+  thu:[
+    {id:'t1',name:'데드리프트',               part:'햄스트링·둔근·등',sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'허리 중립 필수. 엉덩이로 밀어내듯 일어서기. 바 몸 가까이.'},
+    {id:'t2',name:'바벨 스쿼트 (파워렉)',      part:'하체 전체',       sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'바 승모근 위. 깊게 앉고 무릎 발끝 방향.'},
+    {id:'t3',name:'루마니안 데드리프트',        part:'햄스트링·둔근',   sets:3,reps:10,weight:50, inc:2.5,machine:false,rest:90, hyp:true, tip:'무릎 살짝 구부리고 고관절 힌지. 바 몸 가까이.'},
+    {id:'t4',name:'바벨 런지',                part:'대퇴사두·둔근',   sets:3,reps:10,weight:30, inc:2.5,machine:false,rest:90, hyp:true, tip:'바벨 승모근 위. 앞발 무릎 90도. 양쪽 각 10회.'},
+    {id:'t5',name:'Power Leg Press',           part:'하체 전체',       sets:3,reps:10,weight:80, inc:5,  machine:true, rest:90, hyp:true, tip:'발 높이 배치 — 햄스트링·둔근 강조.'},
+    {id:'t6',name:'Torso 머신',               part:'복사근·코어',     sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 코어로 돌리기. 양방향 동일 횟수.'},
+    {id:'t7',name:'트위스트',                 part:'복사근',          sets:3,reps:20,weight:0,  inc:0,  machine:false,rest:45, hyp:false,tip:'자체중량. 무릎 굽혀 앉아 상체만 좌우 회전.'},
+  ],
+  tue:[
+    {id:'u1',name:'버터플라이 체스트프레스',   part:'대흉근',          sets:4,reps:10,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴 완전히 열기. 끝에서 2초 쥐어짜기.'},
+    {id:'u2',name:'인클라인 벤치프레스',       part:'상부 대흉근',     sets:3,reps:10,weight:40, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 5+5+봉(20kg). 30~45도. 내릴 때 3초.'},
+    {id:'u3',name:'팩덱 플라이',              part:'대흉근 내측',     sets:3,reps:12,weight:30, inc:5,  machine:true, rest:60, hyp:true, tip:'어깨 말리지 않게. 끝에서 2초.'},
+    {id:'u4',name:'숄더 프레스',              part:'삼각근 전면',     sets:3,reps:10,weight:30, inc:5,  machine:true, rest:90, hyp:true, tip:'팔꿈치 90도. 머리 위까지 완전히.'},
+    {id:'u5',name:'케이블머신 (사이드 레이즈)',part:'삼각근 측면',     sets:3,reps:12,weight:10, inc:5,  machine:true, rest:60, hyp:true, tip:'팔 살짝 구부린 채 귀 높이까지만. 반동 금지.'},
+    {id:'u8',name:'케이블 푸시다운',          part:'삼두근',          sets:3,reps:12,weight:20, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 사용. 팔꿈치 옆구리에 고정. 끝에서 완전히 펴고 2초 유지.'},
+    {id:'u9',name:'케이블 오버헤드 익스텐션', part:'삼두근 장두',     sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 등 돌리고 양손으로 머리 위에서 뻗기. 팔꿈치 고정. 장두 스트레치 의식.'},
+    {id:'u6',name:'Abnormal Crunch 머신',     part:'복근',            sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'복근으로만. 끝에서 2초 수축.'},
+    {id:'u7',name:'Abs Slide',                part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정. 천천히.'},
+  ],
+  fri:[
+    {id:'f1',name:'Chinning & Dipping',       part:'광배근·삼두',     sets:4,reps:8, weight:0,  inc:0,  machine:false,rest:120,hyp:true, tip:'풀업+딥 교대. 안되면 보조 사용. 끝까지 당기고 천천히 내려오기.'},
+    {id:'f2',name:'풀다운 시트드로우',         part:'광배근·중등',     sets:4,reps:10,weight:50, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴으로 당기기. 시작 전 어깨 내리기.'},
+    {id:'f3',name:'티바 로우',                part:'중부 등',         sets:3,reps:10,weight:40, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 10+5kg. 허리 중립. 날개뼈 모으기.'},
+    {id:'f4',name:'백 로잉 체어',             part:'등 중·하부',      sets:3,reps:12,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'날개뼈 끝까지 모으기. 끝에서 2초.'},
+    {id:'f7',name:'리버스 팩덱 플라이',        part:'삼각근 후면·능형근',sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'팩덱 머신 반대 방향. 팔꿈치 살짝 구부리고 뒤로 열기. 끝에서 2초.'},
+    {id:'f8',name:'페이스 풀',                part:'삼각근 후면·회전근',sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 눈높이 설정. 양손으로 얼굴 쪽으로 당기기. 외회전 의식.'},
+    {id:'f5',name:'해머 인클라인 컬',          part:'이두·상완근',     sets:3,reps:10,weight:14, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 7kg×2. 해머 그립. 완전 신전 필수.'},
+    {id:'f6',name:'Incline Bicep Curl',        part:'이두근 장두',     sets:3,reps:10,weight:10, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 5kg×2. 완전 신전 필수. 엄지 위로.'},
+  ]
+};
+
+// ═══════════════════════════════════════════════════
+//  STORAGE KEYS
+// ═══════════════════════════════════════════════════
+const SK = {
+  weights:   'wt_weights',
+  pending:   'wt_pending',   // 다음 세션 예약 무게 {id: nextWeight}
+  streaks:   'wt_streaks',
+  inbody:    'wt_inbody',
+  history:   'wt_history',
+  todayRes:  'wt_today_res',
+};
+
+function lsGet(k){ try{return JSON.parse(localStorage.getItem(k))}catch{return null} }
+function lsSet(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch{} }
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let curDay='mon';
+let weights={}, pendingWeights={}, failStreak={}, failReps={}, results={}, cardioDone={};
+let wtOn=false, wtSecs=0, wtIv=null;
+let restIv=null, restRemain=0, restTotal=0;
+let pendingModal=null;
+let curBW=BASE_BW, curFat=25.5;
+let histFilter='all';
+
+function allEx(){ return Object.values(EX).flat(); }
+
+// ═══════════════════════════════════════════════════
+//  INIT — load from localStorage
+// ═══════════════════════════════════════════════════
+function init(){
+  // 기본값 세팅
+  allEx().forEach(e=>{
+    weights[e.id]  = e.weight;
+    failStreak[e.id] = 0;
+  });
+
+  // 저장된 무게·스트릭 불러오기
+  const sw = lsGet(SK.weights);
+  if(sw) Object.assign(weights, sw);
+  const sp = lsGet(SK.pending);
+  if(sp) Object.assign(pendingWeights, sp);
+  const ss = lsGet(SK.streaks);
+  if(ss) Object.assign(failStreak, ss);
+
+  // 인바디
+  const si = lsGet(SK.inbody);
+  if(si){ curBW=si.bw||BASE_BW; curFat=si.fat||25.5; }
+
+  // 오늘 세션 불러오기 (같은 날짜면 유지)
+  const today = todayStr();
+  const sr = lsGet(SK.todayRes);
+  const todayDay = SCHEDULE[new Date().getDay()] || 'mon';
+
+  if(sr && sr.date===today){
+    curDay      = sr.day || todayDay;
+    results     = sr.results   || {};
+    failReps    = sr.failReps  || {};
+    cardioDone  = sr.cardioDone|| {};
+  } else {
+    // 새 날짜 — 예약 무게 적용
+    curDay = todayDay;
+    if(Object.keys(pendingWeights).length > 0){
+      Object.assign(weights, pendingWeights);
+      pendingWeights = {};
+      saveWeights();
+      lsSet(SK.pending, {});
+    }
+    resetSession();
+  }
+
+  // 오늘 세션에 없는 운동은 기본값으로
+  allEx().forEach(e=>{
+    if(!results[e.id])  results[e.id]  = new Array(e.sets).fill(null);
+    if(!failReps[e.id]) failReps[e.id] = new Array(e.sets).fill(null);
+  });
+  if(!cardioDone) cardioDone={};
+  ['mon','tue','thu','fri'].forEach(d=>{ if(cardioDone[d]==null) cardioDone[d]=false; });
+
+  // 인바디 UI 업데이트
+  updateInbodyUI();
+  renderHome();
+  updatePhase();
+  setDay(curDay, false);
+
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+function resetSession(){
+  results={};failReps={};cardioDone={};
+  allEx().forEach(e=>{
+    results[e.id]  = new Array(e.sets).fill(null);
+    failReps[e.id] = new Array(e.sets).fill(null);
+  });
+  ['mon','tue','thu','fri'].forEach(d=>{ cardioDone[d]=false; });
+}
+
+// ═══════════════════════════════════════════════════
+//  SAVE
+// ═══════════════════════════════════════════════════
+function saveWeights(){ lsSet(SK.weights, weights); }
+function savePending(){ lsSet(SK.pending, pendingWeights); }
+function saveStreaks(){ lsSet(SK.streaks, failStreak); }
+function saveInbody(){ lsSet(SK.inbody, {bw:curBW, fat:curFat}); }
+function saveSession(){
+  lsSet(SK.todayRes, {
+    date: todayStr(),
+    day:  curDay,
+    results, failReps, cardioDone
+  });
+}
+
+// 운동 완료 시 히스토리에 추가
+function saveHistoryEntry(exId, setIdx, success, repsActual){
+  const history = lsGet(SK.history) || [];
+  const ex = allEx().find(e=>e.id===exId);
+  const today = todayStr();
+
+  // 오늘+이 운동의 기존 항목 찾기
+  let entry = history.find(h=>h.date===today && h.day===curDay);
+  if(!entry){
+    entry = {date:today, day:curDay, exercises:{}, totalSecs:wtSecs, kcal:calcCalories()};
+    history.unshift(entry);
+  }
+  if(!entry.exercises[exId]){
+    entry.exercises[exId] = {name:ex.name, weight:weights[exId], sets:[]};
+  }
+  // 세트 인덱스 기록
+  entry.exercises[exId].sets[setIdx] = {ok:success, reps: success ? ex.reps : (repsActual||0)};
+  entry.totalSecs = wtSecs;
+  entry.kcal = calcCalories();
+
+  // 최근 90일치만 유지
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-90);
+  const filtered = history.filter(h=>new Date(h.date)>=cutoff);
+  lsSet(SK.history, filtered);
+}
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+function showPage(name){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+name).classList.add('on');
+  document.getElementById('nav-'+name).classList.add('on');
+  if(name==='history') renderHistory();
+}
+
+// ═══════════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════════
+function updatePhase(){
+  const pct=Math.max(0,Math.min(100,Math.round((25.5-curFat)/(25.5-20)*100)));
+  document.getElementById('phase-fill').style.width=pct+'%';
+  document.getElementById('phase-pct').textContent=pct+'%';
+}
+
+function renderHome(){
+  const today=new Date().getDay();
+  const week=document.getElementById('week');
+  week.innerHTML='';
+  DAY_KR.forEach((d,i)=>{
+    const s=SCHEDULE[i];
+    const isLow=s==='mon'||s==='thu';
+    const el=document.createElement('div');
+    el.className='wday'+(s?(isLow?' wa':' wb'):'')+(i===today?' today':'');
+    const lbl={mon:'월',tue:'화',thu:'목',fri:'금'}[s]||'휴';
+    el.innerHTML=`<div class="wdn">${d}</div><div class="wdt">${lbl}</div>`;
+    week.appendChild(el);
+  });
+  const ts=SCHEDULE[today];
+  const pill=document.getElementById('hpill');
+  const pillCfg={
+    mon:{t:'월 · 머신 하체',s:'background:var(--bdd);color:var(--bt);border:1px solid var(--bb)'},
+    tue:{t:'화 · 밀기',     s:'background:var(--ad);color:var(--at);border:1px solid var(--ab)'},
+    thu:{t:'목 · 프리 하체',s:'background:#1a2d1a;color:#86d086;border:1px solid #2a4a2a'},
+    fri:{t:'금 · 당기기',   s:'background:var(--pd);color:var(--pt);border:1px solid #3a2a5a'},
+  };
+  if(ts&&pillCfg[ts]){
+    pill.textContent=pillCfg[ts].t;
+    pill.style.cssText=pillCfg[ts].s+';border-radius:20px;font-size:11px;font-weight:500;padding:3px 10px';
+  }else{
+    pill.textContent='오늘 휴식일';
+    pill.style.cssText='background:var(--bg3);color:var(--tx3);border-radius:20px;font-size:11px;padding:3px 10px';
+  }
+  const info=document.getElementById('today-info');
+  if(ts){
+    const labels={mon:'머신 위주 하체 (근비대)',tue:'밀기 — 가슴·어깨 (유산소성)',thu:'프리웨이트 하체 (근비대)',fri:'당기기 — 등·이두 (유산소성)'};
+    info.innerHTML=`<div style="font-size:13px;color:${DAY_COLOR[ts]};padding:4px 0">▶ ${labels[ts]}. 웨이트 후 유산소 25분 필수!</div>`;
+  }else{
+    info.innerHTML=REST_TIPS.map(t=>`<div class="rtip">${t}</div>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  WORKOUT
+// ═══════════════════════════════════════════════════
+function setDay(day, save=true){
+  curDay=day;
+  ['mon','tue','thu','fri'].forEach(d=>{
+    const btn=document.getElementById('ds-'+d);
+    if(btn) btn.className='ds'+(d===day?' '+d:'');
+  });
+  if(save) saveSession();
+  renderExercises();
+}
+
+function getPartColor(p){
+  if(/대퇴|내전|외전|종아리/.test(p)) return 'var(--g)';
+  if(/햄스|둔근/.test(p)) return '#86d086';
+  if(/하체 전체|데드|허리/.test(p)) return '#60c060';
+  if(/복근|코어|복사|복직/.test(p)) return 'var(--a)';
+  if(/광배|등|중등/.test(p)) return 'var(--b)';
+  if(/대흉|가슴/.test(p)) return 'var(--r)';
+  if(/삼각|어깨|이두|삼두/.test(p)) return 'var(--p)';
+  return 'var(--tx2)';
+}
+
+function renderExercises(){
+  const list=document.getElementById('ex-list');
+  list.innerHTML='';
+  EX[curDay].forEach((ex,idx)=>{
+    const w=weights[ex.id];
+    const arr=results[ex.id]||new Array(ex.sets).fill(null);
+    const done=arr.filter(x=>x===true).length;
+    const fail=arr.filter(x=>x===false).length;
+    const ckd=arr.filter(x=>x!==null).length;
+    const allOk=done===ex.sets;
+    const allCk=ckd===ex.sets;
+    const pct=Math.round(ckd/ex.sets*100);
+    const streak=failStreak[ex.id];
+    const pc=getPartColor(ex.part);
+
+    let notice='';
+    const pending=pendingWeights[ex.id];
+    if(pending){
+      notice=`<div class="notice n-up"><span>📌 다음 세션 → ${pending}kg 예약됨</span></div>`;
+    } else if(allOk&&ex.inc>0){
+      const next=w+ex.inc;
+      notice=`<div class="notice n-up"><span>✅ 전 세트 성공! 다음 세션 → ${next}kg</span><button class="n-btn" onclick="doWeightUp('${ex.id}')">예약</button></div>`;
+    }else if(allOk&&ex.inc===0){
+      notice=`<div class="notice n-up"><span>✅ 전 세트 성공!</span></div>`;
+    }else if(allCk&&fail>0){
+      if(streak>=3){
+        const prev=Math.max(w-ex.inc,ex.machine?10:5);
+        notice=ex.inc>0
+          ?`<div class="notice n-dn"><span>🔻 3회 연속 실패 → ${prev}kg</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">예약</button></div>`
+          :`<div class="notice n-dn"><span>🔻 3회 연속 실패. 횟수 줄이기 고려.</span></div>`;
+      }else{
+        notice=`<div class="notice n-w"><span>⚠️ ${fail}세트 실패. 무게 유지 (연속 ${streak}/3)</span></div>`;
+      }
+    }
+
+    const typeTag=`<span class="tag tag-h">근비대 8~12회</span>`;
+
+    const card=document.createElement('div');
+    card.className='ex';
+    card.innerHTML=`
+      <div class="ex-head">
+        <div class="ex-top">
+          <div class="ex-name">${idx+1}. ${ex.name}</div>
+          <div class="ex-top-right">
+            <div class="ex-w" id="exw-${ex.id}">${w>0?w+'kg':'BW'}</div>
+            <div class="rest-pill" id="rest-${ex.id}">
+              <span class="rest-pill-t" id="rest-t-${ex.id}">--:--</span>
+              <button class="rest-pill-cancel" onclick="skipRest('${ex.id}')">✕</button>
+              <div class="rest-pill-bar"><div class="rest-pill-fill" id="rest-f-${ex.id}"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tags">
+          <span class="tag" style="border-color:${pc};color:${pc}">${ex.part}</span>
+          <span class="tag ${ex.machine?'tag-m':'tag-f'}">${ex.machine?'머신':'프리웨이트'}</span>
+          ${typeTag}
+          <span class="tag tag-i">${ex.sets}세트 · 휴식${ex.rest}s</span>
+        </div>
+        <div class="ex-tip">${ex.tip}</div>
+      </div>
+      <div class="sets-wrap">
+        <div class="sets-hdr">
+          <span class="sets-lbl">세트 완료 후 ✓성공 / ✗실패</span>
+          <span class="sets-prog">${done}/${ex.sets}</span>
+        </div>
+        <div class="set-rows" id="rows-${ex.id}"></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      ${notice}
+    `;
+    list.appendChild(card);
+    renderRows(ex);
+  });
+
+  // 유산소
+  const ok=cardioDone[curDay];
+  const cbox=document.createElement('div');
+  cbox.className='cardio';
+  cbox.innerHTML=`
+    <div class="cardio-title">🔥 유산소 — 웨이트 후 필수</div>
+    <div class="c-row${ok?' ok':''}">
+      <div style="flex:1">
+        <div class="c-name">런닝머신 or 천국의 계단</div>
+        <div class="c-sub">25분 · 심박 135~155bpm</div>
+      </div>
+      <button class="c-btn" onclick="toggleCardio('${curDay}')">${ok?'✓ 완료':'완료 체크'}</button>
+    </div>
+  `;
+  list.appendChild(cbox);
+}
+
+function renderRows(ex){
+  const c=document.getElementById('rows-'+ex.id);
+  if(!c) return;
+  c.innerHTML='';
+  const arr=results[ex.id]||[];
+  const fr=failReps[ex.id]||[];
+  const w=weights[ex.id];
+  for(let i=0;i<ex.sets;i++){
+    const s=arr[i];
+    const row=document.createElement('div');
+    row.className='set-row'+(s===true?' ok':s===false?' ng':'');
+    row.innerHTML=`
+      <div class="set-main">
+        <span class="set-num">${i+1}</span>
+        <span class="set-tgt">${ex.reps}회${w>0?' · '+w+'kg':''}</span>
+        <div class="set-btns">
+          <button class="bok" onclick="markSet('${ex.id}',${i},true,${ex.rest})">✓ 성공</button>
+          <button class="bng" onclick="markSet('${ex.id}',${i},false,0)">✗ 실패</button>
+        </div>
+      </div>
+      <div class="fail-wrap">
+        <span class="fail-lbl">몇 개 했나요?</span>
+        <input class="fail-inp" type="number" min="0" max="${ex.reps}"
+          value="${fr[i]!=null?fr[i]:''}" placeholder="0"
+          oninput="saveFail('${ex.id}',${i},this.value)">
+        <span style="font-size:11px;color:var(--rt)">/ ${ex.reps}회</span>
+      </div>
+    `;
+    c.appendChild(row);
+  }
+}
+
+function markSet(id,idx,val,restSecs){
+  if(!results[id]) results[id]=new Array(EX[curDay].find(e=>e.id===id)?.sets||4).fill(null);
+  results[id][idx]=results[id][idx]===val?null:val;
+  const arr=results[id];
+  const ex=allEx().find(e=>e.id===id);
+  const wasSuccess=results[id][idx]===true;
+
+  if(arr.every(x=>x!==null)){
+    failStreak[id]=arr.some(x=>x===false)?(failStreak[id]||0)+1:0;
+    saveStreaks();
+  }
+
+  const actualReps=val===false?(failReps[id]?.[idx]||0):ex.reps;
+  if(results[id][idx]!==null) saveHistoryEntry(id,idx,val===true,actualReps);
+
+  saveSession();
+  renderExercises(); // 렌더 먼저
+
+  // 렌더 후에 타이머 시작 — DOM이 새로 그려진 뒤
+  if(wasSuccess&&restSecs>0) startRest(id,restSecs);
+}
+
+function saveFail(id,idx,val){
+  if(!failReps[id]) failReps[id]=[];
+  failReps[id][idx]=parseInt(val)||0;
+  saveSession();
+}
+
+function toggleCardio(day){
+  cardioDone[day]=!cardioDone[day];
+  saveSession();
+  // 히스토리에도 cardioDone 반영
+  const history=lsGet(SK.history)||[];
+  const today=todayStr();
+  const entry=history.find(h=>h.date===today&&h.day===curDay);
+  if(entry){
+    if(!entry.cardioDone) entry.cardioDone={};
+    entry.cardioDone[day]=cardioDone[day];
+    lsSet(SK.history,history);
+  }
+  renderExercises();
+}
+
+function doWeightUp(id){
+  const ex=allEx().find(e=>e.id===id);
+  const cur=weights[id];
+  const next=cur+ex.inc;
+  const alreadyPending=pendingWeights[id];
+  pendingModal=()=>{
+    pendingWeights[id]=next;
+    failStreak[id]=0;
+    saveStreaks(); savePending();
+    renderExercises();
+  };
+  showModal(
+    ex.name+' — 무게 업 예약',
+    `다음 세션 시작 시 ${cur}kg → ${next}kg 으로 올라갑니다.\n오늘 세션은 ${cur}kg 그대로 유지됩니다.${alreadyPending?`\n(이미 ${alreadyPending}kg 예약 중 — 덮어씁니다)`:''}`
+  );
+}
+
+function doWeightDown(id){
+  const ex=allEx().find(e=>e.id===id);
+  const cur=weights[id];
+  const prev=Math.max(cur-ex.inc, ex.machine?10:5);
+  pendingModal=()=>{
+    pendingWeights[id]=prev;
+    failStreak[id]=0;
+    saveStreaks(); savePending();
+    renderExercises();
+  };
+  showModal(
+    ex.name+' — 무게 감량 예약',
+    `3회 연속 실패. 다음 세션 시작 시 ${cur}kg → ${prev}kg 으로 낮아집니다.\n오늘 세션은 ${cur}kg 그대로 유지됩니다.`
+  );
+}
+
+// ═══════════════════════════════════════════════════
+//  HISTORY PAGE
+// ═══════════════════════════════════════════════════
+function setHistFilter(f){
+  histFilter=f;
+  document.querySelectorAll('.hf-btn').forEach(b=>{
+    b.classList.toggle('on',b.dataset.f===f);
+  });
+  renderHistory();
+}
+
+function renderHistory(){
+  const list=document.getElementById('hist-list');
+  const history=lsGet(SK.history)||[];
+  const filtered=histFilter==='all'?history:history.filter(h=>h.day===histFilter);
+
+  if(filtered.length===0){
+    list.innerHTML='<div class="hist-empty">아직 기록이 없어요.<br>운동을 완료하면 자동으로 저장됩니다.</div>';
+    return;
+  }
+
+  list.innerHTML='';
+  filtered.forEach(entry=>{
+    const dayColors={mon:'var(--bt)',tue:'var(--at)',thu:'#86d086',fri:'var(--pt)'};
+    const dayNames={mon:'월 · 머신 하체',tue:'화 · 밀기',thu:'목 · 프리 하체',fri:'금 · 당기기'};
+    const color=dayColors[entry.day]||'var(--tx2)';
+
+    const div=document.createElement('div');
+    div.className='hist-day';
+
+    const exEntries=Object.values(entry.exercises||{});
+    // 총 세트는 운동 정의 기준
+    const totalSets=exEntries.reduce((a,e)=>{
+      const exDef=allEx().find(x=>x.name===e.name);
+      return a+(exDef?exDef.sets:e.sets?.length||0);
+    },0);
+    const okSets=exEntries.reduce((a,e)=>a+(e.sets?.filter(s=>s?.ok).length||0),0);
+
+    const timeStr=entry.totalSecs?fmt(entry.totalSecs):'--:--';
+    const kcalStr=entry.kcal?entry.kcal+'kcal':'';
+
+    div.innerHTML=`
+      <div class="hist-day-hdr">
+        <div class="hist-date" style="color:${color}">${formatDate(entry.date)} · ${dayNames[entry.day]||''}</div>
+        <div class="hist-day-meta">${timeStr}${kcalStr?' · '+kcalStr:''}</div>
+      </div>
+      <div class="hist-summary">
+        <span>세트 <span>${okSets}/${totalSets}</span> 성공</span>
+        ${entry.cardioDone?.[entry.day]?'<span>유산소 <span style="color:var(--gt)">✓ 완료</span></span>':'<span style="opacity:.5">유산소 미완</span>'}
+      </div>
+    `;
+
+    exEntries.forEach(e=>{
+      const exDef=allEx().find(x=>x.name===e.name);
+      const totalS=exDef?exDef.sets:(e.sets?.length||0);
+      const okC=e.sets?.filter(s=>s?.ok).length||0;
+      const ngC=e.sets?.filter(s=>s&&!s.ok).length||0;
+      const row=document.createElement('div');
+      row.className='hist-ex-row';
+      row.innerHTML=`
+        <div class="hist-ex-name">${e.name}</div>
+        <div class="hist-ex-detail">
+          ${e.weight>0?e.weight+'kg · ':''}
+          <span class="hist-ex-ok">✓${okC}/${totalS}</span>
+          ${ngC>0?` <span class="hist-ex-ng">✗${ngC}</span>`:''}
+        </div>
+      `;
+      div.appendChild(row);
+    });
+
+    list.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  REST TIMER
+// ═══════════════════════════════════════════════════
+function startRest(exId,secs){
+  clearInterval(restIv);
+  // 모든 pill 숨기기
+  document.querySelectorAll('.rest-pill').forEach(el=>el.classList.remove('show'));
+
+  restTotal=secs; restRemain=secs;
+  const pill = document.getElementById('rest-'+exId);
+  const disp = document.getElementById('rest-t-'+exId);
+  const fill = document.getElementById('rest-f-'+exId);
+  if(!pill||!disp) return;
+
+  pill.classList.add('show');
+  disp.style.color='var(--bt)';
+  disp.textContent=fmt(secs);
+  if(fill) fill.style.width='100%';
+
+  restIv=setInterval(()=>{
+    restRemain--;
+    if(restRemain<=0){
+      clearInterval(restIv);
+      disp.textContent='완료!';
+      disp.style.color='var(--g)';
+      if(fill) fill.style.width='0%';
+      setTimeout(()=>pill.classList.remove('show'),1500);
+      return;
+    }
+    disp.textContent=fmt(restRemain);
+    disp.style.color=restRemain<=10?'var(--r)':restRemain<=20?'var(--a)':'var(--bt)';
+    if(fill) fill.style.width=Math.round(restRemain/restTotal*100)+'%';
+  },1000);
+}
+
+function skipRest(exId){
+  clearInterval(restIv);
+  const pill=document.getElementById('rest-'+exId);
+  if(pill) pill.classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════
+//  WORKOUT TIMER + CALORIE
+// ═══════════════════════════════════════════════════
+function calcCalories(){ return Math.round((MET[curDay]||5)*curBW*wtSecs/3600); }
+
+function wtToggle(){
+  wtOn=!wtOn;
+  const btn=document.getElementById('btn-wts');
+  btn.textContent=wtOn?'일시정지':'재개';
+  btn.className='wt-btn'+(wtOn?' active':'');
+  if(wtOn){wtIv=setInterval(()=>{wtSecs++;updateWt();},1000);}
+  else clearInterval(wtIv);
+}
+function wtReset(){
+  clearInterval(wtIv);wtOn=false;wtSecs=0;
+  const btn=document.getElementById('btn-wts');
+  btn.textContent='시작';btn.className='wt-btn';
+  document.getElementById('wt-time').textContent='00:00';
+  document.getElementById('wt-cal').textContent='0';
+}
+function updateWt(){
+  const m=Math.floor(wtSecs/60),s=wtSecs%60;
+  document.getElementById('wt-time').textContent=pad(m)+':'+pad(s);
+  document.getElementById('wt-cal').textContent=calcCalories();
+}
+
+// ═══════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════
+function showModal(t,b,confirmLabel='확인'){
+  document.getElementById('m-title').textContent=t;
+  document.getElementById('m-body').textContent=b;
+  document.getElementById('m-confirm-btn').textContent=confirmLabel;
+  document.getElementById('modal').classList.add('on');
+}
+function confirmModal(){if(pendingModal){pendingModal();pendingModal=null;}closeModal();}
+function closeModal(){document.getElementById('modal').classList.remove('on');pendingModal=null;}
+
+// ═══════════════════════════════════════════════════
+//  CSV
+// ═══════════════════════════════════════════════════
+function parseCSV(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const lines=ev.target.result.split('\n');
+      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^\uFEFF/,''));
+      const vals=lines[1]?lines[1].split(','):[];
+      const get=k=>{const i=hdrs.findIndex(h=>h.includes(k));return i>=0?vals[i]:null;};
+      const w=parseFloat(get('체중')),fat=parseFloat(get('체지방률'));
+      if(!isNaN(w)&&w>0){
+        curBW=w;
+        recalcWeights(w);
+        document.getElementById('g-bw-val').textContent=w+' → 63kg';
+        const p=Math.max(0,Math.min(100,Math.round((66.4-w)/(66.4-63)*100)));
+        document.getElementById('g-bw-fill').style.width=p+'%';
+      }
+      if(!isNaN(fat)&&fat>0){
+        curFat=fat;
+        const p=Math.max(0,Math.min(100,Math.round((25.5-fat)/(25.5-13)*100)));
+        document.getElementById('g-fat-fill').style.width=p+'%';
+        document.getElementById('g-fat-val').textContent=fat+'% → 13%';
+        updatePhase();
+      }
+      saveInbody();
+      updateInbodyUI();
+      document.getElementById('csv-msg').innerHTML=`<span style="color:var(--g)">✓ ${w}kg · ${fat}% 저장 완료</span>`;
+    }catch{
+      document.getElementById('csv-msg').innerHTML=`<span style="color:var(--r)">파싱 오류</span>`;
+    }
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+function recalcWeights(newBW){
+  const ratio=newBW/BASE_BW;
+  allEx().forEach(ex=>{
+    if(ex.weight<=0||ex.inc===0)return;
+    let base=ex.weight*ratio;
+    base=Math.round(base/ex.inc)*ex.inc;
+    weights[ex.id]=Math.max(ex.machine?10:5,base);
+  });
+  saveWeights();
+  renderExercises();
+}
+
+function updateInbodyUI(){
+  document.getElementById('d-bw').innerHTML=curBW+'<span class="s-unit">kg</span>';
+  document.getElementById('d-fat').innerHTML=curFat+'<span class="s-unit">%</span>';
+  document.getElementById('ib-bw').textContent=curBW+' kg';
+  document.getElementById('ib-fat').textContent=curFat+' %';
+}
+
+// ═══════════════════════════════════════════════════
+//  DATA RESET
+// ═══════════════════════════════════════════════════
+function confirmClearData(){
+  pendingModal=()=>{
+    [SK.weights,SK.pending,SK.streaks,SK.inbody,SK.history,SK.todayRes].forEach(k=>localStorage.removeItem(k));
+    location.reload();
+  };
+  showModal('데이터 초기화','모든 운동 기록, 무게, 인바디 데이터가 삭제됩니다.\n정말 초기화할까요?','삭제');
+  document.getElementById('m-confirm-btn').className='btn btn-r';
+}
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+function pad(n){return String(n).padStart(2,'0');}
+function fmt(secs){return pad(Math.floor(secs/60))+':'+pad(secs%60);}
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function formatDate(str){
+  if(!str)return'';
+  const d=new Date(str);
+  const days=['일','월','화','수','목','금','토'];
+  return `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+}
+
+init();
+</script>
+</body>
+</html>
