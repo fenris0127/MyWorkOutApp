@@ -2,7 +2,7 @@
   "name": "운동 트래커",
   "short_name": "운동",
   "description": "체지방 감량 4분할 운동 트래커",
-  "start_url": "./workout.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f0f0f",
   "theme_color": "#0f0f0f",
