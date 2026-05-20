@@ -380,23 +380,21 @@ const MET = {mon:5.5,tue:5.0,thu:5.5,fri:5.0};
 // ═══════════════════════════════════════════════════
 const EX = {
   mon:[
+  mon:[
     {id:'m1',name:'Omni Leg Press',          part:'대퇴사두',        sets:4,reps:10,weight:80, inc:10, machine:true, rest:90, hyp:true, tip:'발 어깨 너비. 끝까지 펴지 말것. 10kg 단위 증량.'},
     {id:'m2',name:'Leg Extension',            part:'대퇴사두 고립',   sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'끝에서 2초 수축. 천천히 내리기.'},
-    {id:'m3',name:'Lying Leg Curl',            part:'햄스트링',        sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'골반 고정. 끝에서 2초 수축.'},
-    {id:'m4',name:'Hip Adduction',             part:'내전근',          sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'천천히 열고 빠르게 모아.'},
-    {id:'m5',name:'Hip Abduction 머신',        part:'외전근·둔근',     sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'빠르게 열고 천천히 모아. 둔근 수축 의식.'},
-    {id:'m6',name:'스쿼트 & 카프레이즈 머신', part:'대퇴+종아리',     sets:3,reps:12,weight:50, inc:5,  machine:true, rest:75, hyp:true, tip:'스쿼트 12회 후 같은 자리에서 카프레이즈 12회 연속.'},
-    {id:'m7',name:'Abnormal Crunch 머신',      part:'복근',            sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 복근으로만. 끝에서 2초 수축.'},
-    {id:'m8',name:'Abs Slide',                 part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정 후 배꼽 당기며 천천히.'},
+    {id:'m4',name:'Hip Adduction',            part:'내전근',          sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'천천히 열고 빠르게 모아.'},
+    {id:'m5',name:'Hip Abduction 머신',       part:'외전근·둔근',     sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'빠르게 열고 천천히 모아. 둔근 수축 의식.'},
+    {id:'m6',name:'스쿼트 & 카프레이즈 머신',part:'대퇴+종아리',     sets:3,reps:12,weight:50, inc:5,  machine:true, rest:75, hyp:true, tip:'스쿼트 12회 후 같은 자리에서 카프레이즈 12회 연속.'},
+    {id:'m7',name:'Abnormal Crunch 머신',     part:'복근',            sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 복근으로만. 끝에서 2초 수축.'},
+    {id:'m8',name:'Abs Slide',                part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정 후 배꼽 당기며 천천히.'},
   ],
   thu:[
-    {id:'t1',name:'데드리프트',               part:'햄스트링·둔근·등',sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'허리 중립 필수. 엉덩이로 밀어내듯 일어서기. 바 몸 가까이.'},
-    {id:'t2',name:'바벨 스쿼트 (파워렉)',      part:'하체 전체',       sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'바 승모근 위. 깊게 앉고 무릎 발끝 방향.'},
-    {id:'t3',name:'루마니안 데드리프트',        part:'햄스트링·둔근',   sets:3,reps:10,weight:50, inc:2.5,machine:false,rest:90, hyp:true, tip:'무릎 살짝 구부리고 고관절 힌지. 바 몸 가까이.'},
-    {id:'t4',name:'바벨 런지',                part:'대퇴사두·둔근',   sets:3,reps:10,weight:30, inc:2.5,machine:false,rest:90, hyp:true, tip:'바벨 승모근 위. 앞발 무릎 90도. 양쪽 각 10회.'},
-    {id:'t5',name:'Power Leg Press',           part:'하체 전체',       sets:3,reps:10,weight:80, inc:5,  machine:true, rest:90, hyp:true, tip:'발 높이 배치 — 햄스트링·둔근 강조.'},
-    {id:'t6',name:'Torso 머신',               part:'복사근·코어',     sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 코어로 돌리기. 양방향 동일 횟수.'},
-    {id:'t7',name:'트위스트',                 part:'복사근',          sets:3,reps:20,weight:0,  inc:0,  machine:false,rest:45, hyp:false,tip:'자체중량. 무릎 굽혀 앉아 상체만 좌우 회전.'},
+    {id:'t1',name:'데드리프트',               part:'햄스트링·둔근·등', sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'허리 중립 필수. 엉덩이로 밀어내듯 일어서기. 바 몸 가까이.'},
+    {id:'t5',name:'Power Leg Press',           part:'햄스트링·둔근',    sets:4,reps:10,weight:80, inc:5,  machine:true, rest:90, hyp:true, tip:'발 높이 배치. 햄스트링·둔근 강조. 깊게 내려가기.'},
+    {id:'t9',name:'Lying Leg Curl',            part:'햄스트링',         sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'골반 고정. 끝에서 2초 수축. 천천히 내리기.'},
+    {id:'ta',name:'Hip Abduction 머신',        part:'둔근·외전근',      sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'빠르게 열고 천천히 모아. 둔근 수축 의식.'},
+    {id:'tb',name:'Abnormal Crunch 머신',      part:'복근',             sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 복근으로만. 끝에서 2초 수축.'},
   ],
   tue:[
     {id:'u1',name:'버터플라이 체스트프레스',   part:'대흉근',          sets:4,reps:10,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴 완전히 열기. 끝에서 2초 쥐어짜기.'},
@@ -410,7 +408,7 @@ const EX = {
     {id:'u7',name:'Abs Slide',                part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정. 천천히.'},
   ],
   fri:[
-    {id:'f1',name:'Chinning & Dipping',       part:'광배근·삼두',     sets:4,reps:8, weight:0,  inc:0,  machine:false,rest:120,hyp:true, tip:'풀업+딥 교대. 안되면 보조 사용. 끝까지 당기고 천천히 내려오기.'},
+    {id:'f1',name:'Chinning & Dipping',       part:'광배근·삼두',     sets:4,reps:16,weight:0,  inc:0,  machine:false,rest:120,hyp:true, tip:'풀업 8회 + 딥 8회 = 1세트. 교대로. 안되면 보조 사용. 천천히 내려오기.'},
     {id:'f2',name:'풀다운 시트드로우',         part:'광배근·중등',     sets:4,reps:10,weight:50, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴으로 당기기. 시작 전 어깨 내리기.'},
     {id:'f3',name:'티바 로우',                part:'중부 등',         sets:3,reps:10,weight:40, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 10+5kg. 허리 중립. 날개뼈 모으기.'},
     {id:'f4',name:'백 로잉 체어',             part:'등 중·하부',      sets:3,reps:12,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'날개뼈 끝까지 모으기. 끝에서 2초.'},
