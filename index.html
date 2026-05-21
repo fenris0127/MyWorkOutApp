@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;
 
 /* Week */
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px}
-.wday{border-radius:6px;padding:5px 2px;text-align:center;border:1px solid var(--bd);background:var(--bg3)}
+.wday{border-radius:6px;padding:5px 2px;text-align:center;border:1px solid var(--bd);background:var(--bg3);min-height:38px}
 .wday.wa{background:var(--bdd);border-color:var(--bb)}
 .wday.wb{background:var(--ad);border-color:var(--ab)}
 .wday.today{border-width:2px!important;border-color:var(--g)!important}
@@ -334,8 +334,17 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
     </div>
     <div class="card">
       <div class="sec">데이터 관리</div>
-      <div style="font-size:12px;color:var(--tx2);margin-bottom:10px">운동 기록, 무게, 인바디가 기기에 저장됩니다.</div>
-      <button class="btn btn-r" onclick="confirmClearData()" style="font-size:13px;width:100%">모든 데이터 초기화</button>
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:10px">기기 브라우저에 저장됩니다. 폰 바꿀 때 내보내기 → 가져오기로 이전하세요.</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-g" onclick="exportData()" style="font-size:13px;width:100%">📤 데이터 내보내기 (JSON)</button>
+        <div class="upload" onclick="document.getElementById('json-in').click()" style="padding:14px;margin-bottom:0">
+          <div style="font-size:13px;color:var(--tx2)">📥 데이터 가져오기 (JSON)</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:3px">내보낸 파일 선택 시 자동 복원</div>
+        </div>
+        <input type="file" id="json-in" accept=".json" onchange="importData(event)">
+        <div id="json-msg" style="font-size:12px"></div>
+        <button class="btn btn-r" onclick="confirmClearData()" style="font-size:13px;width:100%">🗑 모든 데이터 초기화</button>
+      </div>
     </div>
   </div>
 </div>
@@ -389,16 +398,17 @@ const EX = {
     {id:'m8',name:'Abs Slide',                part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정 후 배꼽 당기며 천천히.'},
   ],
   thu:[
-    {id:'t1',name:'데드리프트',               part:'햄스트링·둔근·등', sets:4,reps:8, weight:60, inc:2.5,machine:false,rest:120,hyp:true, tip:'허리 중립 필수. 엉덩이로 밀어내듯 일어서기. 바 몸 가까이.'},
+    {id:'t1',name:'루마니안 데드리프트',        part:'햄스트링·둔근',    sets:4,reps:10,weight:60, inc:2.5,machine:false,rest:90, hyp:true, tip:'무릎 살짝 구부리고 고관절 힌지. 바 몸 가까이. 햄스트링 스트레치 느끼기.'},
     {id:'t5',name:'Power Leg Press',           part:'햄스트링·둔근',    sets:4,reps:10,weight:80, inc:5,  machine:true, rest:90, hyp:true, tip:'발 높이 배치. 햄스트링·둔근 강조. 깊게 내려가기.'},
     {id:'t9',name:'Lying Leg Curl',            part:'햄스트링',         sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'골반 고정. 끝에서 2초 수축. 천천히 내리기.'},
     {id:'ta',name:'Hip Abduction 머신',        part:'둔근·외전근',      sets:3,reps:12,weight:35, inc:5,  machine:true, rest:60, hyp:true, tip:'빠르게 열고 천천히 모아. 둔근 수축 의식.'},
+    {id:'tc',name:'Hip Adduction',             part:'내전근',           sets:3,reps:12,weight:40, inc:5,  machine:true, rest:60, hyp:true, tip:'천천히 열고 빠르게 모아. 끝에서 1초 유지.'},
     {id:'tb',name:'Abnormal Crunch 머신',      part:'복근',             sets:3,reps:15,weight:30, inc:5,  machine:true, rest:60, hyp:false,tip:'머신 사용. 복근으로만. 끝에서 2초 수축.'},
+    {id:'td',name:'Abs Slide',                 part:'복근 전체',        sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정 후 배꼽 당기며 천천히.'},
   ],
   tue:[
     {id:'u1',name:'버터플라이 체스트프레스',   part:'대흉근',          sets:4,reps:10,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴 완전히 열기. 끝에서 2초 쥐어짜기.'},
     {id:'u2',name:'인클라인 벤치프레스',       part:'상부 대흉근',     sets:3,reps:10,weight:40, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 5+5+봉(20kg). 30~45도. 내릴 때 3초.'},
-    {id:'u3',name:'팩덱 플라이',              part:'대흉근 내측',     sets:3,reps:12,weight:30, inc:5,  machine:true, rest:60, hyp:true, tip:'어깨 말리지 않게. 끝에서 2초.'},
     {id:'u4',name:'숄더 프레스',              part:'삼각근 전면',     sets:3,reps:10,weight:30, inc:5,  machine:true, rest:90, hyp:true, tip:'팔꿈치 90도. 머리 위까지 완전히.'},
     {id:'u5',name:'케이블머신 (사이드 레이즈)',part:'삼각근 측면',     sets:3,reps:12,weight:10, inc:5,  machine:true, rest:60, hyp:true, tip:'팔 살짝 구부린 채 귀 높이까지만. 반동 금지.'},
     {id:'u8',name:'케이블 푸시다운',          part:'삼두근',          sets:3,reps:12,weight:20, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 사용. 팔꿈치 옆구리에 고정. 끝에서 완전히 펴고 2초 유지.'},
@@ -411,10 +421,10 @@ const EX = {
     {id:'f2',name:'풀다운 시트드로우',         part:'광배근·중등',     sets:4,reps:10,weight:50, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴으로 당기기. 시작 전 어깨 내리기.'},
     {id:'f3',name:'티바 로우',                part:'중부 등',         sets:3,reps:10,weight:40, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 10+5kg. 허리 중립. 날개뼈 모으기.'},
     {id:'f4',name:'백 로잉 체어',             part:'등 중·하부',      sets:3,reps:12,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'날개뼈 끝까지 모으기. 끝에서 2초.'},
-    {id:'f7',name:'리버스 팩덱 플라이',        part:'삼각근 후면·능형근',sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'팩덱 머신 반대 방향. 팔꿈치 살짝 구부리고 뒤로 열기. 끝에서 2초.'},
-    {id:'f8',name:'페이스 풀',                part:'삼각근 후면·회전근',sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 눈높이 설정. 양손으로 얼굴 쪽으로 당기기. 외회전 의식.'},
+    {id:'f9',name:'케이블 시티드 로우',        part:'등 중부·능형근',  sets:3,reps:12,weight:40, inc:5,  machine:true, rest:90, hyp:true, tip:'케이블머신 양손으로 배꼽 쪽으로 당기기. 날개뼈 모으는 느낌. 상체 반동 금지.'},
+    {id:'f7',name:'리버스 팩덱 플라이',        part:'삼각근 후면·능형근',sets:3,reps:12,weight:15, inc:5, machine:true, rest:60, hyp:true, tip:'팩덱 머신 반대 방향. 팔꿈치 살짝 구부리고 뒤로 열기. 끝에서 2초.'},
+    {id:'f8',name:'페이스 풀',                part:'삼각근 후면·회전근',sets:3,reps:12,weight:15, inc:5, machine:true, rest:60, hyp:true, tip:'케이블머신 눈높이 설정. 양손으로 얼굴 쪽으로 당기기. 외회전 의식.'},
     {id:'f5',name:'해머 인클라인 컬',          part:'이두·상완근',     sets:3,reps:10,weight:14, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 7kg×2. 해머 그립. 완전 신전 필수.'},
-    {id:'f6',name:'Incline Bicep Curl',        part:'이두근 장두',     sets:3,reps:10,weight:10, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 5kg×2. 완전 신전 필수. 엄지 위로.'},
   ]
 };
 
@@ -505,6 +515,7 @@ function init(){
   setDay(curDay, false);
 
   if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  requestNotificationPermission();
 }
 
 function resetSession(){
@@ -607,7 +618,7 @@ function renderHome(){
   }
   const info=document.getElementById('today-info');
   if(ts){
-    const labels={mon:'머신 위주 하체 (근비대)',tue:'밀기 — 가슴·어깨 (유산소성)',thu:'프리웨이트 하체 (근비대)',fri:'당기기 — 등·이두 (유산소성)'};
+    const labels={mon:'머신 위주 하체 (근비대)',tue:'밀기 — 가슴·어깨·삼두 (근비대)',thu:'프리웨이트 하체 (근비대)',fri:'당기기 — 등·이두·후면어깨 (근비대)'};
     info.innerHTML=`<div style="font-size:13px;color:${DAY_COLOR[ts]};padding:4px 0">▶ ${labels[ts]}. 웨이트 후 유산소 25분 필수!</div>`;
   }else{
     info.innerHTML=REST_TIPS.map(t=>`<div class="rtip">${t}</div>`).join('');
@@ -655,6 +666,7 @@ function renderExercises(){
 
     let notice='';
     const pending=pendingWeights[ex.id];
+    const allFailed = allCk && fail===ex.sets; // 한 세션 전 세트 실패
     if(pending){
       notice=`<div class="notice n-up"><span>📌 다음 세션 → ${pending}kg 예약됨</span></div>`;
     } else if(allOk&&ex.inc>0){
@@ -662,6 +674,11 @@ function renderExercises(){
       notice=`<div class="notice n-up"><span>✅ 전 세트 성공! 다음 세션 → ${next}kg</span><button class="n-btn" onclick="doWeightUp('${ex.id}')">예약</button></div>`;
     }else if(allOk&&ex.inc===0){
       notice=`<div class="notice n-up"><span>✅ 전 세트 성공!</span></div>`;
+    }else if(allFailed){
+      const prev=Math.max(w-ex.inc,ex.machine?10:5);
+      notice=ex.inc>0
+        ?`<div class="notice n-dn"><span>❌ 전 세트 실패. 다음 세션 → ${prev}kg</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">예약</button></div>`
+        :`<div class="notice n-dn"><span>❌ 전 세트 실패. 횟수 줄이기 고려.</span></div>`;
     }else if(allCk&&fail>0){
       if(streak>=3){
         const prev=Math.max(w-ex.inc,ex.machine?10:5);
@@ -779,8 +796,9 @@ function markSet(id,idx,val,restSecs){
   saveSession();
   renderExercises(); // 렌더 먼저
 
-  // 렌더 후에 타이머 시작 — DOM이 새로 그려진 뒤
-  if(wasSuccess&&restSecs>0) startRest(id,restSecs);
+  // 성공이든 실패든 체크하면 휴식 타이머 시작
+  const isChecked = results[id][idx] !== null;
+  if(isChecked && restSecs > 0) startRest(id, restSecs);
 }
 
 function saveFail(id,idx,val){
@@ -914,9 +932,30 @@ function renderHistory(){
 // ═══════════════════════════════════════════════════
 //  REST TIMER
 // ═══════════════════════════════════════════════════
-function startRest(exId,secs){
+
+// 알림 권한 요청
+function requestNotificationPermission(){
+  if('Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission();
+  }
+}
+
+function sendRestDoneNotification(exName){
+  // 진동 (안드로이드)
+  if(navigator.vibrate) navigator.vibrate([300, 100, 300]);
+
+  // 브라우저 알림
+  if('Notification' in window && Notification.permission === 'granted'){
+    new Notification('휴식 완료! 💪', {
+      body: exName ? `${exName} — 다음 세트 시작하세요` : '다음 세트 시작하세요',
+      icon: '🔥',
+      silent: false,
+    });
+  }
+}
+
+function startRest(exId, secs){
   clearInterval(restIv);
-  // 모든 pill 숨기기
   document.querySelectorAll('.rest-pill').forEach(el=>el.classList.remove('show'));
 
   restTotal=secs; restRemain=secs;
@@ -924,6 +963,8 @@ function startRest(exId,secs){
   const disp = document.getElementById('rest-t-'+exId);
   const fill = document.getElementById('rest-f-'+exId);
   if(!pill||!disp) return;
+
+  const exName = allEx().find(e=>e.id===exId)?.name || '';
 
   pill.classList.add('show');
   disp.style.color='var(--bt)';
@@ -937,7 +978,8 @@ function startRest(exId,secs){
       disp.textContent='완료!';
       disp.style.color='var(--g)';
       if(fill) fill.style.width='0%';
-      setTimeout(()=>pill.classList.remove('show'),1500);
+      sendRestDoneNotification(exName);
+      setTimeout(()=>pill.classList.remove('show'),2000);
       return;
     }
     disp.textContent=fmt(restRemain);
@@ -1047,8 +1089,55 @@ function updateInbodyUI(){
 }
 
 // ═══════════════════════════════════════════════════
-//  DATA RESET
+//  DATA EXPORT / IMPORT
 // ═══════════════════════════════════════════════════
+function exportData(){
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    weights:   lsGet(SK.weights)   || {},
+    pending:   lsGet(SK.pending)   || {},
+    streaks:   lsGet(SK.streaks)   || {},
+    inbody:    lsGet(SK.inbody)    || {},
+    history:   lsGet(SK.history)   || [],
+    todayRes:  lsGet(SK.todayRes)  || {},
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = todayStr();
+  a.href     = url;
+  a.download = `workout_backup_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data.version) throw new Error('잘못된 파일');
+
+      if(data.weights)  lsSet(SK.weights,  data.weights);
+      if(data.pending)  lsSet(SK.pending,  data.pending);
+      if(data.streaks)  lsSet(SK.streaks,  data.streaks);
+      if(data.inbody)   lsSet(SK.inbody,   data.inbody);
+      if(data.history)  lsSet(SK.history,  data.history);
+      if(data.todayRes) lsSet(SK.todayRes, data.todayRes);
+
+      document.getElementById('json-msg').innerHTML =
+        `<span style="color:var(--g)">✓ 복원 완료. 새로고침합니다...</span>`;
+      setTimeout(()=>location.reload(), 1500);
+    }catch(err){
+      document.getElementById('json-msg').innerHTML =
+        `<span style="color:var(--r)">파일 오류: ${err.message}</span>`;
+    }
+  };
+  reader.readAsText(file);
+}
 function confirmClearData(){
   pendingModal=()=>{
     [SK.weights,SK.pending,SK.streaks,SK.inbody,SK.history,SK.todayRes].forEach(k=>localStorage.removeItem(k));
