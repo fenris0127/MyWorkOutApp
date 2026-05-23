@@ -417,14 +417,15 @@ const EX = {
     {id:'u7',name:'Abs Slide',                part:'복근 전체',       sets:3,reps:10,weight:0,  inc:0,  machine:false,rest:60, hyp:false,tip:'자체중량. 코어 고정. 천천히.'},
   ],
   fri:[
-    {id:'f1',name:'Chinning & Dipping',       part:'광배근·삼두',     sets:4,reps:16,weight:0,  inc:0,  machine:false,rest:120,hyp:true, tip:'풀업 8회 + 딥 8회 = 1세트. 교대로. 안되면 보조 사용. 천천히 내려오기.'},
-    {id:'f2',name:'풀다운 시트드로우',         part:'광배근·중등',     sets:4,reps:10,weight:30, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴으로 당기기. 시작 전 어깨 내리기.'},
-    {id:'f3',name:'티바 로우',                part:'중부 등',         sets:3,reps:10,weight:25, inc:2.5,machine:false,rest:90, hyp:true, tip:'원판 5+5kg+봉. 허리 중립. 날개뼈 모으기.'},
-    {id:'f4',name:'백 로잉 체어',             part:'등 중·하부',      sets:3,reps:12,weight:25, inc:5,  machine:true, rest:90, hyp:true, tip:'날개뼈 끝까지 모으기. 끝에서 2초.'},
-    {id:'f9',name:'케이블 시티드 로우',        part:'등 중부·능형근',  sets:3,reps:12,weight:25, inc:5,  machine:true, rest:90, hyp:true, tip:'케이블머신 양손으로 배꼽 쪽으로 당기기. 날개뼈 모으는 느낌. 상체 반동 금지.'},
-    {id:'f7',name:'리버스 팩덱 플라이',        part:'삼각근 후면·능형근',sets:3,reps:12,weight:10, inc:5, machine:true, rest:60, hyp:true, tip:'팩덱 머신 반대 방향. 팔꿈치 살짝 구부리고 뒤로 열기. 끝에서 2초.'},
-    {id:'f8',name:'페이스 풀',                part:'삼각근 후면·회전근',sets:3,reps:12,weight:10, inc:5, machine:true, rest:60, hyp:true, tip:'케이블머신 눈높이 설정. 양손으로 얼굴 쪽으로 당기기. 외회전 의식.'},
-    {id:'f5',name:'해머 인클라인 컬',          part:'이두·상완근',     sets:3,reps:10,weight:10, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 5kg×2. 해머 그립. 완전 신전 필수.'},
+    {id:'f1',name:'Chinning & Dipping',       part:'광배근·삼두',       sets:4,reps:16,weight:0,  inc:0,  machine:false,rest:120,hyp:true, tip:'풀업 8회 + 딥 8회 = 1세트. 교대로. 안되면 보조 사용. 천천히 내려오기.'},
+    {id:'f2',name:'시티드 로우',               part:'광배근·중등',       sets:4,reps:10,weight:30, inc:5,  machine:true, rest:90, hyp:true, tip:'가슴으로 당기기. 시작 전 어깨 내리기. 날개뼈 끝까지 모으기.'},
+    {id:'f3',name:'티바 로우',                 part:'중부 등',           sets:3,reps:12,weight:25, inc:5,  machine:true, rest:90, hyp:true, tip:'머신 사용. 날개뼈 모으기. 팔꿈치 몸통 가까이.'},
+    {id:'f4',name:'랫풀다운',                  part:'광배근·하부',       sets:3,reps:12,weight:30, inc:5,  machine:true, rest:90, hyp:true, tip:'넓은 그립. 가슴 쪽으로 당기기. 날개뼈 먼저 내리고 시작.'},
+    {id:'f9',name:'바벨 로우',                 part:'등 중부·능형근',    sets:3,reps:12,weight:25, inc:2.5,machine:false,rest:90, hyp:true, tip:'허리 중립 45도 기울기. 배꼽 쪽으로 당기기. 날개뼈 모으기.'},
+    {id:'f7',name:'리버스 팩덱 플라이',         part:'삼각근 후면·능형근',sets:3,reps:12,weight:10, inc:5,  machine:true, rest:60, hyp:true, tip:'팩덱 머신 반대 방향. 팔꿈치 살짝 구부리고 뒤로 열기. 끝에서 2초.'},
+    {id:'f8',name:'페이스 풀',                 part:'삼각근 후면·회전근',sets:3,reps:12,weight:10, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 눈높이 설정. 양손으로 얼굴 쪽으로 당기기. 외회전 의식.'},
+    {id:'f5',name:'해머 인클라인 컬',           part:'이두·상완근',       sets:3,reps:10,weight:10, inc:2,  machine:false,rest:60, hyp:true, tip:'덤벨 5kg×2. 해머 그립. 완전 신전 필수.'},
+    {id:'fa',name:'케이블 푸시다운',            part:'삼두근',            sets:3,reps:12,weight:15, inc:5,  machine:true, rest:60, hyp:true, tip:'케이블머신 사용. 팔꿈치 옆구리에 고정. 끝에서 완전히 펴고 2초 유지.'},
   ]
 };
 
@@ -675,15 +676,25 @@ function renderExercises(){
     }else if(allOk&&ex.inc===0){
       notice=`<div class="notice n-up"><span>✅ 전 세트 성공!</span></div>`;
     }else if(allFailed){
-      const prev=Math.max(w-ex.inc,ex.machine?10:5);
+      const failedIdxs=arr.map((v,i)=>v===false?i:-1).filter(i=>i>=0);
+      const frl=failedIdxs.map(i=>(failReps[ex.id]||[])[i]||0);
+      const avg=frl.length>0?frl.reduce((a,b)=>a+b,0)/frl.length:0;
+      const isReduceWeight=avg<=ex.reps/2;
+      const prev=prevWeight(w,ex);
+      const newReps=Math.max(ex.reps-2,4);
       notice=ex.inc>0
-        ?`<div class="notice n-dn"><span>❌ 전 세트 실패. 다음 세션 → ${prev}kg</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">예약</button></div>`
+        ?`<div class="notice n-dn"><span>❌ 전 세트 실패. ${isReduceWeight?`무게 감량 → ${prev}kg`:`횟수 감소 → ${newReps}회`}</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">조정</button></div>`
         :`<div class="notice n-dn"><span>❌ 전 세트 실패. 횟수 줄이기 고려.</span></div>`;
     }else if(allCk&&fail>0){
       if(streak>=3){
-        const prev=Math.max(w-ex.inc,ex.machine?10:5);
+        const failedIdxs=arr.map((v,i)=>v===false?i:-1).filter(i=>i>=0);
+        const frl=failedIdxs.map(i=>(failReps[ex.id]||[])[i]||0);
+        const avg=frl.length>0?frl.reduce((a,b)=>a+b,0)/frl.length:0;
+        const isReduceWeight=avg<=ex.reps/2;
+        const prev=prevWeight(w,ex);
+        const newReps=Math.max(ex.reps-2,4);
         notice=ex.inc>0
-          ?`<div class="notice n-dn"><span>🔻 3회 연속 실패 → ${prev}kg</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">예약</button></div>`
+          ?`<div class="notice n-dn"><span>🔻 3회 연속 실패. ${isReduceWeight?`무게 감량 → ${prev}kg`:`횟수 감소 → ${newReps}회`}</span><button class="n-btn" onclick="doWeightDown('${ex.id}')">조정</button></div>`
           :`<div class="notice n-dn"><span>🔻 3회 연속 실패. 횟수 줄이기 고려.</span></div>`;
       }else{
         notice=`<div class="notice n-w"><span>⚠️ ${fail}세트 실패. 무게 유지 (연속 ${streak}/3)</span></div>`;
@@ -730,15 +741,32 @@ function renderExercises(){
   });
 
   // 유산소
+  const maxHR = Math.round(220 - 35); // 나이 35 기준 (인바디 나이 참고)
+  const hrLow = Math.round(maxHR * 0.65);
+  const hrHigh = Math.round(maxHR * 0.80);
   const ok=cardioDone[curDay];
   const cbox=document.createElement('div');
   cbox.className='cardio';
   cbox.innerHTML=`
     <div class="cardio-title">🔥 유산소 — 웨이트 후 필수</div>
+    <div style="display:flex;gap:12px;margin-bottom:8px;font-size:11px">
+      <div style="background:var(--rd);border:1px solid var(--rb);border-radius:6px;padding:5px 10px;flex:1;text-align:center">
+        <div style="color:var(--rt);font-size:10px;margin-bottom:2px">목표 심박수</div>
+        <div style="color:var(--rt);font-weight:700;font-family:'DM Mono',monospace;font-size:14px">${hrLow}~${hrHigh} bpm</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:6px;padding:5px 10px;flex:1;text-align:center">
+        <div style="color:var(--tx2);font-size:10px;margin-bottom:2px">최대 심박수</div>
+        <div style="color:var(--tx2);font-weight:700;font-family:'DM Mono',monospace;font-size:14px">${maxHR} bpm</div>
+      </div>
+      <div style="background:var(--bd_);border:1px solid var(--bb);border-radius:6px;padding:5px 10px;flex:1;text-align:center">
+        <div style="color:var(--bt);font-size:10px;margin-bottom:2px">시간</div>
+        <div style="color:var(--bt);font-weight:700;font-family:'DM Mono',monospace;font-size:14px">25분</div>
+      </div>
+    </div>
     <div class="c-row${ok?' ok':''}">
       <div style="flex:1">
         <div class="c-name">런닝머신 or 천국의 계단</div>
-        <div class="c-sub">25분 · 심박 135~155bpm</div>
+        <div class="c-sub">완료 시 운동 타이머 자동 정지</div>
       </div>
       <button class="c-btn" onclick="toggleCardio('${curDay}')">${ok?'✓ 완료':'완료 체크'}</button>
     </div>
@@ -763,7 +791,7 @@ function renderRows(ex){
         <span class="set-tgt">${ex.reps}회${w>0?' · '+w+'kg':''}</span>
         <div class="set-btns">
           <button class="bok" onclick="markSet('${ex.id}',${i},true,${ex.rest})">✓ 성공</button>
-          <button class="bng" onclick="markSet('${ex.id}',${i},false,0)">✗ 실패</button>
+          <button class="bng" onclick="markSet('${ex.id}',${i},false,${ex.rest})">✗ 실패</button>
         </div>
       </div>
       <div class="fail-wrap">
@@ -801,16 +829,21 @@ function markSet(id,idx,val,restSecs){
   if(isChecked && restSecs > 0) startRest(id, restSecs);
 }
 
+let failRenderTimer=null;
 function saveFail(id,idx,val){
   if(!failReps[id]) failReps[id]=[];
   failReps[id][idx]=parseInt(val)||0;
   saveSession();
+  // 입력 끝나고 800ms 후 렌더 (커서 날아가는 것 방지)
+  clearTimeout(failRenderTimer);
+  failRenderTimer=setTimeout(()=>renderExercises(), 800);
 }
 
 function toggleCardio(day){
   cardioDone[day]=!cardioDone[day];
+  // 유산소 완료 시 운동 타이머 정지
+  if(cardioDone[day] && wtOn) wtToggle();
   saveSession();
-  // 히스토리에도 cardioDone 반영
   const history=lsGet(SK.history)||[];
   const today=todayStr();
   const entry=history.find(h=>h.date===today&&h.day===curDay);
@@ -825,12 +858,13 @@ function toggleCardio(day){
 function doWeightUp(id){
   const ex=allEx().find(e=>e.id===id);
   const cur=weights[id];
-  const next=cur+ex.inc;
+  const next=nextWeight(cur, ex);
   const alreadyPending=pendingWeights[id];
   pendingModal=()=>{
     pendingWeights[id]=next;
     failStreak[id]=0;
     saveStreaks(); savePending();
+    // 타이머 건드리지 않음 — 그대로 유지
     renderExercises();
   };
   showModal(
@@ -842,17 +876,63 @@ function doWeightUp(id){
 function doWeightDown(id){
   const ex=allEx().find(e=>e.id===id);
   const cur=weights[id];
-  const prev=Math.max(cur-ex.inc, ex.machine?10:5);
-  pendingModal=()=>{
-    pendingWeights[id]=prev;
-    failStreak[id]=0;
-    saveStreaks(); savePending();
-    renderExercises();
-  };
-  showModal(
-    ex.name+' — 무게 감량 예약',
-    `3회 연속 실패. 다음 세션 시작 시 ${cur}kg → ${prev}kg 으로 낮아집니다.\n오늘 세션은 ${cur}kg 그대로 유지됩니다.`
-  );
+  const arr=results[id]||[];
+
+  // 실패한 세트들의 횟수 평균 계산 (입력 안 한 건 0으로)
+  const failedIdxs = arr.map((v,i)=>v===false?i:-1).filter(i=>i>=0);
+  const failRepsList = failedIdxs.map(i=>(failReps[id]||[])[i]||0);
+  const avgFailReps = failRepsList.length>0
+    ? failRepsList.reduce((a,b)=>a+b,0)/failRepsList.length : 0;
+  const halfReps = ex.reps / 2;
+
+  // 절반 이하 → 무게 감량 / 절반 초과 → 횟수 감소
+  const reduceWeight = avgFailReps <= halfReps;
+
+  if(reduceWeight){
+    const prev = prevWeight(cur, ex);
+    pendingModal=()=>{
+      pendingWeights[id]=prev;
+      failStreak[id]=0;
+      saveStreaks(); savePending();
+      renderExercises();
+    };
+    showModal(
+      ex.name+' — 무게 감량 예약',
+      `평균 ${Math.round(avgFailReps)}회로 절반 이하 실패.\n무게 감량: ${cur}kg → ${prev}kg\n다음 세션부터 적용됩니다.`
+    );
+  } else {
+    const newReps = Math.max(ex.reps - 2, 4);
+    pendingModal=()=>{
+      // 횟수 감소는 EX 데이터 직접 수정
+      const exObj = allEx().find(e=>e.id===id);
+      if(exObj) exObj.reps = newReps;
+      failStreak[id]=0;
+      saveStreaks();
+      renderExercises();
+    };
+    showModal(
+      ex.name+' — 횟수 감소',
+      `평균 ${Math.round(avgFailReps)}회로 절반 초과 실패.\n횟수 감소: ${ex.reps}회 → ${newReps}회\n무게는 유지됩니다.`
+    );
+  }
+}
+
+// 다음 무게 계산 (덤벨 단위 포함)
+const DUMBBELL_SIZES = [1,2,3,4,5,6,7,8,9,10,11,13,15,17,18,20,25,30,35,40];
+function nextWeight(cur, ex){
+  if(!ex.machine && ex.weight < 30){
+    // 덤벨 — 다음 단계
+    const idx = DUMBBELL_SIZES.indexOf(cur/2);
+    if(idx>=0 && idx<DUMBBELL_SIZES.length-1) return DUMBBELL_SIZES[idx+1]*2;
+  }
+  return Math.round((cur + ex.inc)*10)/10;
+}
+function prevWeight(cur, ex){
+  if(!ex.machine && ex.weight < 30){
+    const idx = DUMBBELL_SIZES.indexOf(cur/2);
+    if(idx>0) return DUMBBELL_SIZES[idx-1]*2;
+  }
+  return Math.max(Math.round((cur - ex.inc)*10)/10, ex.machine?10:2);
 }
 
 // ═══════════════════════════════════════════════════
